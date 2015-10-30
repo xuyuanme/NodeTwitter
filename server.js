@@ -8,6 +8,7 @@ var express = require('express')
 var oauth = require('oauth')
 var util = require('util')
 var session = require('express-session')
+var cors = require('cors')
 var config = require('./config.js')
 
 var _requestTokenAppCallBackUrl = 'reacttwitter://foo'
@@ -25,6 +26,13 @@ var _tApiProfile = 'https://api.twitter.com/1.1/account/verify_credentials.json'
 var port = process.env.PORT || 8483    // set our port
 var app = express()         // define our app using express
 app.use(session({secret: 'React Twitter Secret'}))
+
+// Enable cors request and cookies for localhost debug
+var corsOptions = {
+  origin: 'http://localhost:8080',
+  credentials: true
+};
+app.use(cors(corsOptions))
 
 // ROUTES FOR OUR API
 // =============================================================================
