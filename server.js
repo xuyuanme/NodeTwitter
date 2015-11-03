@@ -12,7 +12,7 @@ var cors = require('cors')
 var config = require('./config.js')
 
 var _requestTokenAppCallBackUrl = 'reacttwitter://foo'
-var _requestTokenWebCallBackUrl = 'http://xuyuan.me:8483/twitter/accessToken'
+var _requestTokenWebCallBackUrl = 'http://localhost:8080/reacttwitter/callback'
 
 var consumer = new oauth.OAuth(
   'https://twitter.com/oauth/request_token',
@@ -20,7 +20,6 @@ var consumer = new oauth.OAuth(
   config.twitterConsumerKey, config.twitterConsumerSecret, '1.0A', _requestTokenAppCallBackUrl, 'HMAC-SHA1'
 )
 
-var _tOauthAuthorize = 'https://twitter.com/oauth/authorize?oauth_token='
 var _tApiProfile = 'https://api.twitter.com/1.1/account/verify_credentials.json'
 
 var port = process.env.PORT || 8483    // set our port
@@ -57,12 +56,7 @@ router.get('/requestToken', function (req, res) {
         req.session.oauthRequestTokenSecret = oauthTokenSecret
         console.log(req.session)
 
-        if (isAppClient(req)) {
-          res.json({'oauthRequestToken': req.session.oauthRequestToken})
-        } else {
-          res.redirect(_tOauthAuthorize + req.session.oauthRequestToken)
-        }
-
+        res.json({'oauthRequestToken': req.session.oauthRequestToken})
         console.log('Complete /twitter/requestToken')
       }
     }
@@ -82,12 +76,7 @@ router.get('/accessToken', function (req, res) {
         req.session.oauthAccessTokenSecret = oauthAccessTokenSecret
         console.log(req.session)
 
-        if (isAppClient(req)) {
-          res.send('OK')
-        } else {
-          res.redirect('/twitter/profile')
-        }
-
+        res.send('OK')
         console.log('Complete /twitter/accessToken')
       }
     }
@@ -122,11 +111,7 @@ function isAppClient(req) {
 
 function handleError(req, res, error) {
   console.log('Error: ' + util.inspect(error))
-  if (isAppClient(req)) {
-    res.status(error.statusCode).send(util.inspect(error))
-  } else if (error.statusCode === 403) {
-    res.redirect('/twitter/requestToken')
-  }
+  res.status(error.statusCode).send(util.inspect(error))
 }
 
 // more routes for our API will happen here
