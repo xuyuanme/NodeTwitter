@@ -11,8 +11,9 @@ var session = require('express-session')
 var cors = require('cors')
 var config = require('./config.js')
 
-var _requestTokenAppCallBackUrl = 'reacttwitter://foo'
-var _requestTokenWebCallBackUrl = 'http://localhost:8080/reacttwitter/callback'
+var reactTwitterAppName = 'reacttwitter'
+var _requestTokenAppCallBackUrl = reactTwitterAppName + '://foo'
+var _requestTokenWebCallBackUrl = 'http://localhost:8080/' + reactTwitterAppName + '/callback'
 
 var consumer = new oauth.OAuth(
   'https://twitter.com/oauth/request_token',
@@ -102,7 +103,7 @@ router.get('*', function (req, res) {
 })
 
 function isAppClient(req) {
-  if (req.headers['user-agent'].substr(0, 12) === 'ReactTwitter') {
+  if (req.headers['user-agent'].substr(0, reactTwitterAppName.length).toLowerCase() === reactTwitterAppName) {
     return true
   } else {
     return false
