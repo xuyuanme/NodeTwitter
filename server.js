@@ -104,6 +104,10 @@ router.get('*', function (req, res) {
 
 function isAppClient(req) {
   if (req.headers['user-agent'].substr(0, reactTwitterAppName.length).toLowerCase() === reactTwitterAppName) {
+    // React Native iOS App
+    return true
+  } else if (req.headers['user-agent'].substr(0, 6) === 'okhttp') {
+    // React Native Android App
     return true
   } else {
     return false
